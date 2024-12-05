@@ -34,10 +34,10 @@ class Angie < Formula
       s.gsub! "    #}\n\n}", "    #}\n    include servers/*;\n}"
     end
 
-    openssl = Formula["libressl"]
+    libressl = Formula["libressl"]
     pcre = Formula["pcre2"]
 
-    cc_opt = "-I#{pcre.opt_include} -I#{openssl.opt_include}"
+    cc_opt = "-I#{pcre.opt_include} -I#{libressl.opt_include}"
     ld_opt = "-L#{pcre.opt_lib} -L#{libressl.opt_lib}"
 
     args = %W[
