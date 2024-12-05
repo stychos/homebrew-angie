@@ -16,7 +16,7 @@ class Angie < Formula
     sha256 x86_64_linux:  "7a4f75de608255de3dfb7140ea2ed81ce7516f5353a297c44218a86450eecddc"
   end
 
-  depends_on "libressl@4"
+  depends_on "libressl"
   depends_on "pcre2"
 
   uses_from_macos "xz" => :build
