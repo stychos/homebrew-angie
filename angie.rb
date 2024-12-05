@@ -52,6 +52,7 @@ class Angie < Formula
       --http-fastcgi-temp-path=#{var}/run/angie/fastcgi_temp
       --http-uwsgi-temp-path=#{var}/run/angie/uwsgi_temp
       --http-scgi-temp-path=#{var}/run/angie/scgi_temp
+      --http-acme-client-path=#{var}/acme
       --http-log-path=#{var}/log/angie/access.log
       --error-log-path=#{var}/log/angie/error.log
       --with-compat
@@ -109,6 +110,7 @@ class Angie < Formula
   def post_install
     (etc/"angie/servers").mkpath
     (var/"run/angie").mkpath
+    (var/"acme").mkpath
 
     # angie's docroot is #{prefix}/html, this isn't useful, so we symlink it
     # to #{HOMEBREW_PREFIX}/var/www. The reason we symlink instead of patching
