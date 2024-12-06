@@ -17,6 +17,8 @@ class Angie < Formula
 
   depends_on "libressl"
   depends_on "pcre2"
+  depends_on "gd"
+  depends_on "geoip"
 
   uses_from_macos "xz" => :build
   uses_from_macos "libxcrypt"
