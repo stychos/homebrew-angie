@@ -15,7 +15,7 @@ class Angie < Formula
     rebuild 1
   end
 
-  depends_on "libressl"
+  depends_on "quictls"
   depends_on "pcre2"
   depends_on "gd"
   depends_on "geoip"
@@ -35,11 +35,11 @@ class Angie < Formula
       s.gsub! "    #}\n\n}", "    #}\n    include servers/*;\n}"
     end
 
-    libressl = Formula["libressl"]
+    quictls = Formula["quictls"]
     pcre = Formula["pcre2"]
 
-    cc_opt = "-I#{pcre.opt_include} -I#{libressl.opt_include}"
-    ld_opt = "-L#{pcre.opt_lib} -L#{libressl.opt_lib}"
+    cc_opt = "-I#{pcre.opt_include} -I#{quictls.opt_include}"
+    ld_opt = "-L#{pcre.opt_lib} -L#{quictls.opt_lib}"
 
     args = %W[
       --prefix=#{prefix}
