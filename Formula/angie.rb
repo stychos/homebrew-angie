@@ -142,9 +142,11 @@ class Angie < Formula
       Docroot is: #{var}/www
 
       The default port has been set in #{etc}/angie/angie.conf to 8080 so that
-      angie can run without sudo.
+      Angie can run without sudo.
 
-      angie will load all files in #{etc}/angie/servers/.
+      Angie will load all files in #{etc}/angie/servers/.
+
+      The default directory for ACME certificates is #{var}/acme/.
     EOS
   end
 
