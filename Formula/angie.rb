@@ -1,8 +1,8 @@
 class Angie < Formula
   desc "HTTP(S) server and reverse proxy, and IMAP/POP3 proxy server"
   homepage "https://en.angie.software/"
-  url "https://download.angie.software/files/angie-1.8.0.tar.gz"
-  sha256 "51b032959074ba4922e4067b5d48122c84077a44f787c22a2f2cbf73f9811b01"
+  url "https://download.angie.software/files/angie-1.8.1.tar.gz"
+  sha256 "db30b69045cf9a40f144911814414d9e1b4d4370f6693d008f4017dcb4370b4c"
   license "Angie Software Product License"
   head "https://github.com/webserver-llc/angie.git", branch: "master"
 
