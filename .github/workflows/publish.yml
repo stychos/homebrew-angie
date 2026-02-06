@@ -61,41 +61,38 @@ jobs:
           gh release create "$tag" --title "$tag" --notes "Bottle built from ${GITHUB_SHA}" ./*.bottle.tar.gz
 
       - name: Update formula with bottle block
+        shell: bash
         run: |
-          # Parse the bottle JSON and update the formula
-          for json in *.bottle.json; do
-            formula_file="Formula/angie.rb"
-            # Extract bottle info from JSON and build the bottle block
-            python3 -c "
-          import json, sys
-          with open('$json') as f:
-              data = json.load(f)
-          formula = list(data.keys())[0]
-          info = data[formula]['bottle']
-          root_url = info['root_url']
-          tags = info['tags']
-          lines = ['  bottle do']
-          lines.append(f'    root_url \"{root_url}\"')
-          for tag, details in sorted(tags.items()):
-              sha = details['sha256']
-              cellar = details.get('cellar', ':any')
-              lines.append(f'    sha256 cellar: {cellar}, {tag}: \"{sha}\"')
-          lines.append('  end')
-          block = '\n'.join(lines)
+          tag="bottle-${GITHUB_SHA::7}"
+          root_url="https://github.com/${{ github.repository }}/releases/download/${tag}"
 
-          with open('$formula_file') as f:
-              content = f.read()
+          # Build bottle block into a temp file
+          bottle_block=$(mktemp)
+          {
+            echo '  bottle do'
+            echo "    root_url \"${root_url}\""
+            for tarball in ./*.bottle.tar.gz; do
+              sha256=$(sha256sum "$tarball" | cut -d ' ' -f1)
+              os_tag="${tarball##*.bottle.tar.gz}"
+              os_tag="${tarball%.bottle.tar.gz}"
+              os_tag="${os_tag##*.}"
+              echo "    sha256 cellar: :any, ${os_tag}: \"${sha256}\""
+            done
+            echo '  end'
+          } > "$bottle_block"
 
-          import re
-          # Insert bottle block after license/head line, before depends_on
-          if '  bottle do' in content:
-              content = re.sub(r'  bottle do.*?  end', block, content, flags=re.DOTALL)
-          else:
-              content = content.replace('\n  depends_on', '\n\n' + block + '\n\n  depends_on', 1)
-          with open('$formula_file', 'w') as f:
-              f.write(content)
-          "
-          done
+          # Rebuild formula: everything before depends_on, bottle block, rest
+          formula_file="Formula/angie.rb"
+          head_part=$(sed -n '1,/^  depends_on/{ /^  depends_on/!p; }' "$formula_file")
+          tail_part=$(sed -n '/^  depends_on/,$p' "$formula_file")
+          {
+            echo "$head_part"
+            echo ""
+            cat "$bottle_block"
+            echo ""
+            echo "$tail_part"
+          } > "$formula_file"
+          rm "$bottle_block"
 
       - name: Commit and push bottle update
         run: |
