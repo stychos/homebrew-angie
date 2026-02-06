@@ -41,7 +41,8 @@ jobs:
       - name: Build bottle
         run: |
           brew install --build-bottle stychos/angie/angie
-          brew bottle --no-rebuild --root-url="https://github.com/${{ github.repository }}/releases/download/bottle-${GITHUB_SHA::7}" stychos/angie/angie
+          version=$(brew info --json=v1 stychos/angie/angie | jq -r '.[0].versions.stable')
+          brew bottle --no-rebuild --root-url="https://github.com/${{ github.repository }}/releases/download/${version}" stychos/angie/angie
           for f in ./*--*.bottle.*; do mv "$f" "${f//--/-}"; done
 
       - name: Upload bottle as artifact
@@ -70,14 +71,16 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          tag="bottle-${GITHUB_SHA::7}"
-          gh release create "$tag" --title "$tag" --notes "Bottle built from ${GITHUB_SHA}" ./*.bottle.tar.gz
+          version=$(ls ./*.bottle.tar.gz | head -1 | sed -E 's/.*angie-([0-9.]+)\..*/\1/')
+          gh release delete "$version" --yes 2>/dev/null || true
+          git push --delete origin "$version" 2>/dev/null || true
+          gh release create "$version" --title "Angie ${version}" --notes "Bottles for Angie ${version}" ./*.bottle.tar.gz
 
       - name: Update formula with bottle block
         shell: bash
         run: |
-          tag="bottle-${GITHUB_SHA::7}"
-          root_url="https://github.com/${{ github.repository }}/releases/download/${tag}"
+          version=$(ls ./*.bottle.tar.gz | head -1 | sed -E 's/.*angie-([0-9.]+)\..*/\1/')
+          root_url="https://github.com/${{ github.repository }}/releases/download/${version}"
 
           # Build bottle block into a temp file
           bottle_block=$(mktemp)
