@@ -30,7 +30,7 @@ jobs:
       - name: Build bottle
         run: |
           brew install --build-bottle stychos/angie/angie
-          brew bottle --no-rebuild --root-url="https://github.com/${{ github.repository }}/releases/download/${{ github.sha }}" stychos/angie/angie
+          brew bottle --no-rebuild --root-url="https://github.com/${{ github.repository }}/releases/download/bottle-${GITHUB_SHA::7}" stychos/angie/angie
 
       - name: Upload bottles as artifact
         uses: actions/upload-artifact@v4
@@ -53,11 +53,12 @@ jobs:
         with:
           name: bottles
 
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ github.sha }}
-          files: "*.bottle.*"
+      - name: Create GitHub Release and upload bottles
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag="bottle-${GITHUB_SHA::7}"
+          gh release create "$tag" --title "$tag" --notes "Bottle built from ${GITHUB_SHA}" *.bottle.tar.gz
 
       - name: Update formula with bottle block
         run: |
