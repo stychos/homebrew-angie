@@ -58,7 +58,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           tag="bottle-${GITHUB_SHA::7}"
-          gh release create "$tag" --title "$tag" --notes "Bottle built from ${GITHUB_SHA}" *.bottle.tar.gz
+          gh release create "$tag" --title "$tag" --notes "Bottle built from ${GITHUB_SHA}" ./*.bottle.tar.gz
 
       - name: Update formula with bottle block
         run: |
