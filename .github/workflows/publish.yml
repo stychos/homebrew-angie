@@ -31,6 +31,7 @@ jobs:
         run: |
           brew install --build-bottle stychos/angie/angie
           brew bottle --no-rebuild --root-url="https://github.com/${{ github.repository }}/releases/download/bottle-${GITHUB_SHA::7}" stychos/angie/angie
+          for f in ./*--*.bottle.*; do mv "$f" "${f//--/-}"; done
 
       - name: Upload bottles as artifact
         uses: actions/upload-artifact@v4

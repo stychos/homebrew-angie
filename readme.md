@@ -9,5 +9,5 @@ brew install stychos/angie/angie
 ```
 
 To do:
-- [ ] binary bottles
+- [x] binary bottles
 - [ ] minimal and full versions with separated modules
