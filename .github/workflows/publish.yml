@@ -71,7 +71,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          version=$(ls ./*.bottle.tar.gz | head -1 | sed -E 's/.*angie-([0-9.]+)\..*/\1/')
+          version=$(printf '%s\n' ./*.bottle.tar.gz | head -1 | sed -E 's/.*angie-([0-9.]+)\..*/\1/')
           gh release delete "$version" --yes 2>/dev/null || true
           git push --delete origin "$version" 2>/dev/null || true
           gh release create "$version" --title "Angie ${version}" --notes "Bottles for Angie ${version}" ./*.bottle.tar.gz
@@ -79,19 +79,28 @@ jobs:
       - name: Update formula with bottle block
         shell: bash
         run: |
-          version=$(ls ./*.bottle.tar.gz | head -1 | sed -E 's/.*angie-([0-9.]+)\..*/\1/')
+          version=$(printf '%s\n' ./*.bottle.tar.gz | head -1 | sed -E 's/.*angie-([0-9.]+)\..*/\1/')
           root_url="https://github.com/${{ github.repository }}/releases/download/${version}"
 
-          # Build bottle block into a temp file
+          # Collect bottle info: os_tag and sha256 for each tarball
+          declare -a tags=() shas=()
+          max_tag_len=0
+          for tarball in ./*.bottle.tar.gz; do
+            sha256=$(sha256sum "$tarball" | cut -d ' ' -f1)
+            os_tag="${tarball%.bottle.tar.gz}"
+            os_tag="${os_tag##*.}"
+            tags+=("$os_tag")
+            shas+=("$sha256")
+            (( ${#os_tag} > max_tag_len )) && max_tag_len=${#os_tag}
+          done
+
+          # Build bottle block with aligned digests
           bottle_block=$(mktemp)
           {
             echo '  bottle do'
             echo "    root_url \"${root_url}\""
-            for tarball in ./*.bottle.tar.gz; do
-              sha256=$(sha256sum "$tarball" | cut -d ' ' -f1)
-              os_tag="${tarball%.bottle.tar.gz}"
-              os_tag="${os_tag##*.}"
-              echo "    sha256 cellar: :any, ${os_tag}: \"${sha256}\""
+            for i in "${!tags[@]}"; do
+              printf '    sha256 cellar: :any, %-*s "%s"\n' "$((max_tag_len + 1))" "${tags[$i]}:" "${shas[$i]}"
             done
             echo '  end'
           } > "$bottle_block"

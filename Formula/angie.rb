@@ -14,10 +14,10 @@ class Angie < Formula
   bottle do
     root_url "https://github.com/stychos/homebrew-angie/releases/download/bottle-6e20fd9"
     sha256 cellar: :any, arm64_sequoia: "c9f15950d81f8fb8dd5c413278a399f63911649abafc35c6f3f24ff999965563"
-    sha256 cellar: :any, arm64_sonoma: "a102e2a2d3b28e269c4f17b0d2146a523aacc897ef73ce1e7b7eb8fa999ebc9c"
-    sha256 cellar: :any, arm64_tahoe: "e5c82a9e8d9322601723e9b162520b5b1ada6f28757ff30e20b6d2d27fe9d41a"
-    sha256 cellar: :any, sequoia: "cede26e8ae54815cf8d7b826dfafe084f92b2b9a48fd57fb47500e616de026d3"
-    sha256 cellar: :any, x86_64_linux: "d8fe6189f1de372f8cd74517b47041727f8bff27c9bc6922b53ee6acab8e7ab1"
+    sha256 cellar: :any, arm64_sonoma:  "a102e2a2d3b28e269c4f17b0d2146a523aacc897ef73ce1e7b7eb8fa999ebc9c"
+    sha256 cellar: :any, arm64_tahoe:   "e5c82a9e8d9322601723e9b162520b5b1ada6f28757ff30e20b6d2d27fe9d41a"
+    sha256 cellar: :any, sequoia:       "cede26e8ae54815cf8d7b826dfafe084f92b2b9a48fd57fb47500e616de026d3"
+    sha256 cellar: :any, x86_64_linux:  "d8fe6189f1de372f8cd74517b47041727f8bff27c9bc6922b53ee6acab8e7ab1"
   end
 
   depends_on "gd"
