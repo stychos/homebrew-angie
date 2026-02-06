@@ -12,13 +12,11 @@ class Angie < Formula
   end
 
   bottle do
-    rebuild 1
   end
 
-  depends_on "quictls"
+  depends_on "openssl@3"
   depends_on "pcre2"
   depends_on "gd"
-  depends_on "stychos/angie/geoip"
 
   uses_from_macos "xz" => :build
   uses_from_macos "libxcrypt"
@@ -35,11 +33,11 @@ class Angie < Formula
       s.gsub! "    #}\n\n}", "    #}\n    include servers/*;\n}"
     end
 
-    quictls = Formula["quictls"]
+    openssl = Formula["openssl@3"]
     pcre = Formula["pcre2"]
 
-    cc_opt = "-I#{pcre.opt_include} -I#{quictls.opt_include}"
-    ld_opt = "-L#{pcre.opt_lib} -L#{quictls.opt_lib}"
+    cc_opt = "-I#{pcre.opt_include} -I#{openssl.opt_include}"
+    ld_opt = "-L#{pcre.opt_lib} -L#{openssl.opt_lib}"
 
     args = %W[
       --prefix=#{prefix}
@@ -65,7 +63,6 @@ class Angie < Formula
       --with-http_dav_module
       --with-http_degradation_module
       --with-http_flv_module
-      --with-http_geoip_module
       --with-http_gunzip_module
       --with-http_gzip_static_module
       --with-http_image_filter_module
@@ -85,7 +82,6 @@ class Angie < Formula
       --with-pcre
       --with-pcre-jit
       --with-stream
-      --with-stream_geoip_module
       --with-stream_mqtt_preread_module
       --with-stream_rdp_preread_module
       --with-stream_realip_module
