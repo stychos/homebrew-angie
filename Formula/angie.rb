@@ -3,20 +3,17 @@ class Angie < Formula
   homepage "https://en.angie.software/"
   url "https://download.angie.software/files/angie-1.11.3.tar.gz"
   sha256 "08fa99d18a90f738674b300f64867406045ad5c518e952cd24e3ffdb0c14117d"
-  license "Angie Software Product License"
+  license "BSD-2-Clause"
   head "https://github.com/webserver-llc/angie.git", branch: "master"
 
   livecheck do
     url "https://en.angie.software/angie/docs/installation/sourcebuild/"
-    regex(%r{https:\/\/download.angie.software\/files\/angie-([\d\.]+).tar.gz}i)
+    regex(%r{https://download.angie.software/files/angie-([\d.]+)\.t}i)
   end
 
-  bottle do
-  end
-
+  depends_on "gd"
   depends_on "openssl@3"
   depends_on "pcre2"
-  depends_on "gd"
 
   uses_from_macos "xz" => :build
   uses_from_macos "libxcrypt"
