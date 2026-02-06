@@ -7,7 +7,7 @@ on:
   pull_request:
 
 jobs:
-  test:
+  syntax:
     runs-on: macos-latest
     steps:
       - name: Set up Homebrew
@@ -27,20 +27,31 @@ jobs:
 
       - run: brew test-bot --only-tap-syntax
 
+  build:
+    needs: syntax
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-22.04, macos-15-intel, macos-14, macos-15, macos-26]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Set up Homebrew
+        uses: Homebrew/actions/setup-homebrew@master
+
       - name: Build bottle
         run: |
           brew install --build-bottle stychos/angie/angie
           brew bottle --no-rebuild --root-url="https://github.com/${{ github.repository }}/releases/download/bottle-${GITHUB_SHA::7}" stychos/angie/angie
           for f in ./*--*.bottle.*; do mv "$f" "${f//--/-}"; done
 
-      - name: Upload bottles as artifact
+      - name: Upload bottle as artifact
         uses: actions/upload-artifact@v4
         with:
-          name: bottles
-          path: "*.bottle.*"
+          name: bottle-${{ matrix.os }}
+          path: "*.bottle.tar.gz"
 
   bottle:
-    needs: test
+    needs: build
     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     permissions:
@@ -49,10 +60,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Download bottles from artifact
+      - name: Download all bottle artifacts
         uses: actions/download-artifact@v4
         with:
-          name: bottles
+          pattern: bottle-*
+          merge-multiple: true
 
       - name: Create GitHub Release and upload bottles
         env:
@@ -74,7 +86,6 @@ jobs:
             echo "    root_url \"${root_url}\""
             for tarball in ./*.bottle.tar.gz; do
               sha256=$(sha256sum "$tarball" | cut -d ' ' -f1)
-              os_tag="${tarball##*.bottle.tar.gz}"
               os_tag="${tarball%.bottle.tar.gz}"
               os_tag="${os_tag##*.}"
               echo "    sha256 cellar: :any, ${os_tag}: \"${sha256}\""
@@ -101,5 +112,5 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add Formula/angie.rb
           git diff --cached --quiet && exit 0
-          git commit -m "Update bottle block"
+          git commit -m "updated bottles list"
           git push

@@ -11,16 +11,6 @@ class Angie < Formula
     regex(%r{https://download.angie.software/files/angie-([\d.]+)\.t}i)
   end
 
-  bottle do
-    root_url "https://github.com/stychos/homebrew-angie/releases/download/bottle-e98d057"
-    sha256 cellar: :any, arm64_sequoia: "bbacd58aba4f204ca36784908900dafb141baa8f00ced2e14fcfa182275ce139"
-  end
-
-  bottle do
-    root_url "https://github.com/stychos/homebrew-angie/releases/download/bottle-0896cf3"
-    sha256 cellar: :any, arm64_sequoia: "7025afe01cd4c4c224128c8c8c68850c04277323623edbf9ba9c02c08b588214"
-  end
-
   depends_on "gd"
   depends_on "openssl@3"
   depends_on "pcre2"
