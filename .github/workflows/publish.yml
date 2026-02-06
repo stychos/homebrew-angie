@@ -27,10 +27,12 @@ jobs:
 
       - run: brew test-bot --only-tap-syntax
 
-      - run: brew test-bot --only-formulae
+      - name: Build bottle
+        run: |
+          brew install --build-bottle stychos/angie/angie
+          brew bottle --no-rebuild --root-url="https://github.com/${{ github.repository }}/releases/download/${{ github.sha }}" stychos/angie/angie
 
       - name: Upload bottles as artifact
-        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: bottles
@@ -43,22 +45,62 @@ jobs:
     permissions:
       contents: write
     steps:
-      - name: Set up Homebrew
-        uses: Homebrew/actions/setup-homebrew@master
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Download bottles from artifact
         uses: actions/download-artifact@v4
         with:
           name: bottles
 
-      - name: Create GitHub Release and upload bottles
-        env:
-          HOMEBREW_GITHUB_API_TOKEN: ${{ github.token }}
-        run: |
-          brew pr-pull --no-audit --no-upload "${{ github.sha }}"
-
-      - name: Push bottle commit
-        uses: Homebrew/actions/git-try-push@master
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
         with:
-          token: ${{ github.token }}
-          branch: master
+          tag_name: ${{ github.sha }}
+          files: "*.bottle.*"
+
+      - name: Update formula with bottle block
+        run: |
+          # Parse the bottle JSON and update the formula
+          for json in *.bottle.json; do
+            formula_file="Formula/angie.rb"
+            # Extract bottle info from JSON and build the bottle block
+            python3 -c "
+          import json, sys
+          with open('$json') as f:
+              data = json.load(f)
+          formula = list(data.keys())[0]
+          info = data[formula]['bottle']
+          root_url = info['root_url']
+          tags = info['tags']
+          lines = ['  bottle do']
+          lines.append(f'    root_url \"{root_url}\"')
+          for tag, details in sorted(tags.items()):
+              sha = details['sha256']
+              cellar = details.get('cellar', ':any')
+              lines.append(f'    sha256 cellar: {cellar}, {tag}: \"{sha}\"')
+          lines.append('  end')
+          block = '\n'.join(lines)
+
+          with open('$formula_file') as f:
+              content = f.read()
+
+          import re
+          # Insert bottle block after license/head line, before depends_on
+          if '  bottle do' in content:
+              content = re.sub(r'  bottle do.*?  end', block, content, flags=re.DOTALL)
+          else:
+              content = content.replace('\n  depends_on', '\n\n' + block + '\n\n  depends_on', 1)
+          with open('$formula_file', 'w') as f:
+              f.write(content)
+          "
+          done
+
+      - name: Commit and push bottle update
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add Formula/angie.rb
+          git diff --cached --quiet && exit 0
+          git commit -m "Update bottle block"
+          git push
