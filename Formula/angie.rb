@@ -91,6 +91,8 @@ class Angie < Formula
   uses_from_macos "libxcrypt"
   uses_from_macos "zlib"
 
+  skip_clean "html"
+
   def install
     # keep clean copy of source for compiling dynamic modules e.g. passenger
     (pkgshare/"src").mkpath
@@ -172,34 +174,22 @@ class Angie < Formula
     else
       man8.install "man/angie.8"
     end
-  end
-
-  def post_install
-    (etc/"angie/servers").mkpath
-    (var/"run/angie").mkpath
-    (var/"acme").mkpath
 
     # Angie's docroot is #{prefix}/html, this isn't useful, so we symlink it
     # to #{HOMEBREW_PREFIX}/var/www. The reason we symlink instead of patching
     # is so the user can redirect it easily to something else if they choose.
-    html = prefix/"html"
-    dst = var/"www"
+    libexec.install prefix/"html"
+    prefix.install_symlink var/"www" => "html"
+  end
 
-    if dst.exist?
-      rm_r(html)
-      dst.mkpath
-    else
-      dst.dirname.mkpath
-      html.rename(dst)
+  post_install_steps do
+    mkdir_p "{{etc}}/angie/servers"
+    mkdir_p "{{var}}/run/angie"
+    mkdir_p "{{var}}/acme"
+
+    unless_path_exists "{{var}}/www" do
+      move "{{libexec}}/html", "{{var}}/www"
     end
-
-    prefix.install_symlink dst => "html"
-
-    # for most of this formula's life the binary has been placed in sbin
-    # and Homebrew used to suggest the user copy the plist for Angie to their
-    # ~/Library/LaunchAgents directory. So we need to have a symlink there
-    # for such cases
-    sbin.install_symlink bin/"angie" if rack.subdirs.any? { |d| d.join("sbin").directory? }
   end
 
   def caveats
