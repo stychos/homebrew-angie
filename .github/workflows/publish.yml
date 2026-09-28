@@ -38,10 +38,13 @@ jobs:
       - name: Set up Homebrew
         uses: Homebrew/actions/setup-homebrew@main
 
+      - name: Clean up preinstalled runner packages
+        run: brew test-bot --only-cleanup-before
+
       - name: Build bottle
         run: |
           brew install --build-bottle stychos/angie/angie
-          version=$(brew info --json=v1 stychos/angie/angie | jq -r '.[0].versions.stable')
+          version=$(brew info --json=v1 stychos/angie/angie | grep -oE '"stable": *"[^"]+"' | head -1 | cut -d'"' -f4)
           brew bottle --no-rebuild --root-url="https://github.com/${{ github.repository }}/releases/download/${version}" stychos/angie/angie
           for f in ./*--*.bottle.*; do mv "$f" "${f//--/-}"; done
 
