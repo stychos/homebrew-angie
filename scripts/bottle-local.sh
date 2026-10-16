@@ -14,7 +14,7 @@
 #   4. Adds (or replaces) the tag's sha256 line in the formula's bottle block
 #      for that version (bottle-block.rb). Review the diff, then commit.
 #
-# Usage: ./bottle-local.sh [--no-build] [--no-upload] [--only angie|angie-full]
+# Usage: ./scripts/bottle-local.sh [--no-build] [--no-upload] [--only angie|angie-full]
 #   --no-build   reuse the installed keg (it must have been built with
 #                --build-bottle); only the installed formula is bottled
 #   --no-upload  build and update the formulae only; upload the tarballs later
@@ -49,7 +49,7 @@ do
   shift
 done
 
-cd "$(dirname "$0")"
+cd "$(dirname "$0")/.."
 
 # conflicts_with makes each formula load the other, which Homebrew only allows from a trusted tap
 brew trust --tap "${tap}" >/dev/null

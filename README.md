@@ -83,7 +83,7 @@ Notes:
 
 ## Bottles
 
-CI builds bottles for macOS 15, macOS 26 and x86_64 Linux on every Angie release. macOS 27 "Golden Gate" bottles are built on a Mac with `bottle-local.sh` until GitHub ships a `macos-27` runner.
+CI builds bottles for macOS 15, macOS 26 and x86_64 Linux on every Angie release. macOS 27 "Golden Gate" bottles are built on a Mac with `scripts/bottle-local.sh` until GitHub ships a `macos-27` runner.
 
 ## Thanks
 

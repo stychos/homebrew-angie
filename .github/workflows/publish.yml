@@ -142,7 +142,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           version=$(sed -nE 's/^  url ".*\/angie-([0-9.]+)\.tar\.gz"$/\1/p' Formula/angie.rb)
-          # Keep the release and any assets added outside CI (e.g. with bottle-local.sh);
+          # Keep the release and any assets added outside CI (e.g. with scripts/bottle-local.sh);
           # only the bottles built by this run are replaced.
           if ! gh release view "$version" >/dev/null 2>&1; then
             gh release create "$version" --title "Angie ${version}" --notes "Bottles for Angie ${version}"
