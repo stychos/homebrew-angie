@@ -1,9 +1,10 @@
 class Angie < Formula
-  desc "HTTP(S) server and reverse proxy, and IMAP/POP3 proxy server"
+  desc "HTTP(S) server and reverse proxy with ACME, HTTP/2 and HTTP/3 (minimal build)"
   homepage "https://en.angie.software/"
   url "https://download.en.angie.software/files/angie-1.12.4.tar.gz"
   sha256 "b236f152adb543fb6e4a94f271b873cdc0d48d570f86b1bd04435f85843f4527"
   license "BSD-2-Clause"
+  revision 1
   head "https://github.com/webserver-llc/angie.git", branch: "master"
 
   livecheck do
@@ -81,21 +82,14 @@ class Angie < Formula
     sha256 cellar: :any, x86_64_linux:  "23d5145974b35df184e7b8491f4c45cc282a415370f9f4e37ace9914406b6e7e"
   end
 
-  bottle do
-    root_url "https://github.com/stychos/homebrew-angie/releases/download/1.12.4"
-    sha256 cellar: :any, arm64_golden_gate: "06bb71d6f55726f7458a337722884d5e9c312088ea8ac58ab6884a57d1e6036f"
-    sha256 cellar: :any, arm64_sequoia:     "086d56baa9fa9f10a64326e55ac3cf2172f8d4de1c3432dd304d60cb18894484"
-    sha256 cellar: :any, arm64_tahoe:       "69a00096afd9a8fe5320c2cb0cf2e42bbc8ddd01977fc67a7313f4a90abb4f0b"
-    sha256 cellar: :any, x86_64_linux:      "65349cff4cfbbbc61a03175ca3eeea2cdbff57de9d88b05d0095d8fd7b84294e"
-  end
-
-  depends_on "gd"
   depends_on "openssl@3"
   depends_on "pcre2"
 
   uses_from_macos "xz" => :build
   uses_from_macos "libxcrypt"
   uses_from_macos "zlib"
+
+  conflicts_with "angie-full", because: "both install the angie binary and share its configuration"
 
   skip_clean "html"
 
@@ -133,37 +127,16 @@ class Angie < Formula
       --http-log-path=#{var}/log/angie/access.log
       --error-log-path=#{var}/log/angie/error.log
       --with-compat
-      --with-debug
-      --with-http_acme_module
-      --with-http_addition_module
-      --with-http_auth_request_module
-      --with-http_dav_module
-      --with-http_degradation_module
-      --with-http_flv_module
-      --with-http_gunzip_module
-      --with-http_gzip_static_module
-      --with-http_image_filter_module
-      --with-http_mp4_module
-      --with-http_random_index_module
-      --with-http_realip_module
-      --with-http_secure_link_module
-      --with-http_slice_module
-      --with-http_ssl_module
-      --with-http_stub_status_module
-      --with-http_sub_module
-      --with-http_v2_module
-      --with-http_v3_module
-      --with-ipv6
-      --with-mail
-      --with-mail_ssl_module
+      --with-threads
       --with-pcre
       --with-pcre-jit
-      --with-stream
-      --with-stream_mqtt_preread_module
-      --with-stream_rdp_preread_module
-      --with-stream_realip_module
-      --with-stream_ssl_module
-      --with-stream_ssl_preread_module
+      --with-http_ssl_module
+      --with-http_v2_module
+      --with-http_v3_module
+      --with-http_acme_module
+      --with-http_realip_module
+      --with-http_stub_status_module
+      --with-http_gzip_static_module
     ]
 
     (pkgshare/"src/configure_args.txt").write args.join("\n")
@@ -208,6 +181,11 @@ class Angie < Formula
       Angie will load all files in #{etc}/angie/servers/.
 
       The default directory for ACME certificates is #{var}/acme/.
+
+      This is the minimal build: Angie's default modules plus SSL, HTTP/2, HTTP/3,
+      ACME, realip, stub_status and gzip_static. For stream, mail, WebDAV, image
+      filter, XSLT, sub/addition/slice filters and third-party modules install
+      stychos/angie/angie-full instead (the two conflict with each other).
     EOS
   end
 
