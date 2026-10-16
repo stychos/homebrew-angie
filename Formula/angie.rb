@@ -97,6 +97,13 @@ class Angie < Formula
     sha256 cellar: :any, x86_64_linux:  "23d5145974b35df184e7b8491f4c45cc282a415370f9f4e37ace9914406b6e7e"
   end
 
+  bottle do
+    root_url "https://github.com/stychos/homebrew-angie/releases/download/1.12.4"
+    sha256 cellar: :any, arm64_sequoia: "086d56baa9fa9f10a64326e55ac3cf2172f8d4de1c3432dd304d60cb18894484"
+    sha256 cellar: :any, arm64_tahoe:   "69a00096afd9a8fe5320c2cb0cf2e42bbc8ddd01977fc67a7313f4a90abb4f0b"
+    sha256 cellar: :any, x86_64_linux:  "65349cff4cfbbbc61a03175ca3eeea2cdbff57de9d88b05d0095d8fd7b84294e"
+  end
+
   depends_on "gd"
   depends_on "openssl@3"
   depends_on "pcre2"
