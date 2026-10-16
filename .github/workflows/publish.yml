@@ -5,6 +5,7 @@ on:
     branches:
       - master
   pull_request:
+  workflow_dispatch:
 
 jobs:
   syntax:
@@ -27,8 +28,53 @@ jobs:
 
       - run: brew test-bot --only-tap-syntax
 
+  check:
+    name: check whether bottles are needed
+    runs-on: ubuntu-latest
+    outputs:
+      build: ${{ steps.check.outputs.build }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Compare the formula version with the previous commit and the release
+        id: check
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EVENT: ${{ github.event_name }}
+          BEFORE: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: |
+          version_re='s/^  url ".*\/angie-([0-9.]+)\.tar\.gz"$/\1/p'
+          version=$(sed -nE "$version_re" Formula/angie.rb)
+          previous=""
+          if [[ -n "$BEFORE" && "$BEFORE" != 0000000000000000000000000000000000000000 ]] \
+            && git fetch --quiet --depth=1 origin "$BEFORE" 2>/dev/null; then
+            previous=$(git show "${BEFORE}:Formula/angie.rb" | sed -nE "$version_re")
+          fi
+          assets=$(gh release view "$version" --json assets --jq '.assets[].name' 2>/dev/null || true)
+
+          reason=""
+          if [[ "$EVENT" == "workflow_dispatch" ]]; then
+            reason="manual run"
+          elif [[ -z "$previous" ]]; then
+            reason="no previous formula to compare with"
+          elif [[ "$previous" != "$version" ]]; then
+            reason="version ${previous} -> ${version}"
+          elif [[ "$EVENT" == "push" ]] && ! grep -q '\.bottle\.tar\.gz$' <<< "$assets"; then
+            reason="release ${version} has no bottles yet"
+          fi
+
+          if [[ -n "$reason" ]]; then
+            echo "build=true" >> "$GITHUB_OUTPUT"
+            echo "Building bottles for ${version}: ${reason}" | tee -a "$GITHUB_STEP_SUMMARY"
+          else
+            echo "build=false" >> "$GITHUB_OUTPUT"
+            echo "Skipping bottles: ${version} is unchanged and already released" | tee -a "$GITHUB_STEP_SUMMARY"
+          fi
+
   build:
-    needs: syntax
+    needs: [syntax, check]
+    if: needs.check.outputs.build == 'true'
     strategy:
       fail-fast: false
       matrix:
@@ -56,7 +102,7 @@ jobs:
 
   bottle:
     needs: build
-    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     permissions:
       contents: write
