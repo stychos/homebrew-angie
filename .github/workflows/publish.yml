@@ -37,39 +37,53 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
 
-      - name: Compare the formula version with the previous commit and the release
+      - name: Compare the formula versions with the previous commit and the release
         id: check
         env:
           GH_TOKEN: ${{ github.token }}
           EVENT: ${{ github.event_name }}
           BEFORE: ${{ github.event.pull_request.base.sha || github.event.before }}
         run: |
-          version_re='s/^  url ".*\/angie-([0-9.]+)\.tar\.gz"$/\1/p'
-          version=$(sed -nE "$version_re" Formula/angie.rb)
-          previous=""
+          # package version (upstream version plus _revision) of a formula read from stdin
+          pkgver() {
+            local source version revision
+            source=$(cat)
+            version=$(sed -nE 's/^  url ".*\/angie-([0-9.]+)\.tar\.gz"$/\1/p' <<< "$source")
+            revision=$(sed -nE 's/^  revision ([0-9]+)$/\1/p' <<< "$source")
+            echo "${version}${revision:+_$revision}"
+          }
+          release=$(sed -nE 's/^  url ".*\/angie-([0-9.]+)\.tar\.gz"$/\1/p' Formula/angie.rb)
+          have_previous=0
           if [[ -n "$BEFORE" && "$BEFORE" != 0000000000000000000000000000000000000000 ]] \
             && git fetch --quiet --depth=1 origin "$BEFORE" 2>/dev/null; then
-            previous=$(git show "${BEFORE}:Formula/angie.rb" | sed -nE "$version_re")
+            have_previous=1
           fi
-          assets=$(gh release view "$version" --json assets --jq '.assets[].name' 2>/dev/null || true)
+          assets=$(gh release view "$release" --json assets --jq '.assets[].name' 2>/dev/null || true)
 
           reason=""
           if [[ "$EVENT" == "workflow_dispatch" ]]; then
             reason="manual run"
-          elif [[ -z "$previous" ]]; then
+          elif (( ! have_previous )); then
             reason="no previous formula to compare with"
-          elif [[ "$previous" != "$version" ]]; then
-            reason="version ${previous} -> ${version}"
-          elif [[ "$EVENT" == "push" ]] && ! grep -q '\.bottle\.tar\.gz$' <<< "$assets"; then
-            reason="release ${version} has no bottles yet"
+          else
+            for formula in angie angie-full; do
+              current=$(pkgver < "Formula/${formula}.rb")
+              previous=$(git show "${BEFORE}:Formula/${formula}.rb" 2>/dev/null | pkgver)
+              if [[ "$previous" != "$current" ]]; then
+                reason="${formula} ${previous:-new} -> ${current}"
+              elif [[ "$EVENT" == "push" ]] && ! grep -q "^${formula}-${current}\..*\.bottle\.tar\.gz$" <<< "$assets"; then
+                reason="release ${release} has no ${formula} ${current} bottles yet"
+              fi
+              [[ -n "$reason" ]] && break
+            done
           fi
 
           if [[ -n "$reason" ]]; then
             echo "build=true" >> "$GITHUB_OUTPUT"
-            echo "Building bottles for ${version}: ${reason}" | tee -a "$GITHUB_STEP_SUMMARY"
+            echo "Building bottles: ${reason}" | tee -a "$GITHUB_STEP_SUMMARY"
           else
             echo "build=false" >> "$GITHUB_OUTPUT"
-            echo "Skipping bottles: ${version} is unchanged and already released" | tee -a "$GITHUB_STEP_SUMMARY"
+            echo "Skipping bottles: formulae unchanged and already released" | tee -a "$GITHUB_STEP_SUMMARY"
           fi
 
   build:
@@ -87,14 +101,21 @@ jobs:
       - name: Clean up preinstalled runner packages
         run: brew test-bot --only-cleanup-before
 
-      - name: Build bottle
+      - name: Build bottles
         run: |
-          brew install --build-bottle stychos/angie/angie
+          # conflicts_with makes each formula load the other one, which Homebrew only allows from a trusted tap
+          brew trust --tap stychos/angie
           version=$(brew info --json=v1 stychos/angie/angie | grep -oE '"stable": *"[^"]+"' | head -1 | cut -d'"' -f4)
-          brew bottle --no-rebuild --root-url="https://github.com/${{ github.repository }}/releases/download/${version}" stychos/angie/angie
+          root_url="https://github.com/${{ github.repository }}/releases/download/${version}"
+          # angie and angie-full conflict with each other, so build them one after the other
+          for formula in angie angie-full; do
+            brew install --build-bottle "stychos/angie/${formula}"
+            brew bottle --no-rebuild --root-url="$root_url" "stychos/angie/${formula}"
+            brew uninstall "$formula"
+          done
           for f in ./*--*.bottle.*; do mv "$f" "${f//--/-}"; done
 
-      - name: Upload bottle as artifact
+      - name: Upload bottles as artifacts
         uses: actions/upload-artifact@v7
         with:
           name: bottle-${{ matrix.os }}
@@ -120,7 +141,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          version=$(printf '%s\n' ./*.bottle.tar.gz | head -1 | sed -E 's/.*angie-([0-9.]+)\..*/\1/')
+          version=$(sed -nE 's/^  url ".*\/angie-([0-9.]+)\.tar\.gz"$/\1/p' Formula/angie.rb)
           # Keep the release and any assets added outside CI (e.g. with bottle-local.sh);
           # only the bottles built by this run are replaced.
           if ! gh release view "$version" >/dev/null 2>&1; then
@@ -128,25 +149,30 @@ jobs:
           fi
           gh release upload --clobber "$version" ./*.bottle.tar.gz
 
-      - name: Update formula with bottle block
+      - name: Update formulae with bottle blocks
         shell: bash
         run: |
-          version=$(printf '%s\n' ./*.bottle.tar.gz | head -1 | sed -E 's/.*angie-([0-9.]+)\..*/\1/')
+          version=$(sed -nE 's/^  url ".*\/angie-([0-9.]+)\.tar\.gz"$/\1/p' Formula/angie.rb)
           root_url="https://github.com/${{ github.repository }}/releases/download/${version}"
-          bottles=()
-          for tarball in ./*.bottle.tar.gz; do
-            sha256=$(sha256sum "$tarball" | cut -d ' ' -f1)
-            os_tag="${tarball%.bottle.tar.gz}"
-            os_tag="${os_tag##*.}"
-            bottles+=("${os_tag}=${sha256}")
+          for formula in angie angie-full; do
+            bottles=()
+            for tarball in ./"${formula}"-[0-9]*.bottle.tar.gz; do
+              [[ -e "$tarball" ]] || continue
+              sha256=$(sha256sum "$tarball" | cut -d ' ' -f1)
+              os_tag="${tarball%.bottle.tar.gz}"
+              os_tag="${os_tag##*.}"
+              bottles+=("${os_tag}=${sha256}")
+            done
+            if (( ${#bottles[@]} )); then
+              ruby ./scripts/bottle-block.rb "Formula/${formula}.rb" "$version" "$root_url" "${bottles[@]}"
+            fi
           done
-          ruby ./bottle-block.rb Formula/angie.rb "$version" "$root_url" "${bottles[@]}"
 
       - name: Commit and push bottle update
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add Formula/angie.rb
+          git add Formula/angie.rb Formula/angie-full.rb
           git diff --cached --quiet && exit 0
           git commit -m "updated bottles list"
           git push

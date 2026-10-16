@@ -2,10 +2,11 @@
 
 # Adds or updates the `bottle do` block for one Angie version in the formula.
 #
-#   ruby bottle-block.rb Formula/angie.rb <version> <root_url> <tag>=<sha256>...
+#   ruby scripts/bottle-block.rb Formula/angie.rb <version> <root_url> <tag>=<sha256>...
 #
 # Lines for tags that are not passed are kept, so bottles added from elsewhere
 # (e.g. by bottle-local.sh) survive a CI run for the same version.
+# Lives in scripts/ because `brew doctor` rejects Ruby files in the tap root.
 # Used by .github/workflows/publish.yml and bottle-local.sh.
 
 formula_file, version, root_url, *bottles = ARGV
