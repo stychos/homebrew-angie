@@ -75,51 +75,26 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           version=$(printf '%s\n' ./*.bottle.tar.gz | head -1 | sed -E 's/.*angie-([0-9.]+)\..*/\1/')
-          gh release delete "$version" --yes 2>/dev/null || true
-          git push --delete origin "$version" 2>/dev/null || true
-          gh release create "$version" --title "Angie ${version}" --notes "Bottles for Angie ${version}" ./*.bottle.tar.gz
+          # Keep the release and any assets added outside CI (e.g. with bottle-local.sh);
+          # only the bottles built by this run are replaced.
+          if ! gh release view "$version" >/dev/null 2>&1; then
+            gh release create "$version" --title "Angie ${version}" --notes "Bottles for Angie ${version}"
+          fi
+          gh release upload --clobber "$version" ./*.bottle.tar.gz
 
       - name: Update formula with bottle block
         shell: bash
         run: |
           version=$(printf '%s\n' ./*.bottle.tar.gz | head -1 | sed -E 's/.*angie-([0-9.]+)\..*/\1/')
           root_url="https://github.com/${{ github.repository }}/releases/download/${version}"
-
-          # Collect bottle info: os_tag and sha256 for each tarball
-          declare -a tags=() shas=()
-          max_tag_len=0
+          bottles=()
           for tarball in ./*.bottle.tar.gz; do
             sha256=$(sha256sum "$tarball" | cut -d ' ' -f1)
             os_tag="${tarball%.bottle.tar.gz}"
             os_tag="${os_tag##*.}"
-            tags+=("$os_tag")
-            shas+=("$sha256")
-            (( ${#os_tag} > max_tag_len )) && max_tag_len=${#os_tag}
+            bottles+=("${os_tag}=${sha256}")
           done
-
-          # Build bottle block with aligned digests
-          bottle_block=$(mktemp)
-          {
-            echo '  bottle do'
-            echo "    root_url \"${root_url}\""
-            for i in "${!tags[@]}"; do
-              printf '    sha256 cellar: :any, %-*s "%s"\n' "$((max_tag_len + 1))" "${tags[$i]}:" "${shas[$i]}"
-            done
-            echo '  end'
-          } > "$bottle_block"
-
-          # Rebuild formula: everything before depends_on, bottle block, rest
-          formula_file="Formula/angie.rb"
-          head_part=$(sed -n '1,/^  depends_on/{ /^  depends_on/!p; }' "$formula_file")
-          tail_part=$(sed -n '/^  depends_on/,$p' "$formula_file")
-          {
-            echo "$head_part"
-            echo ""
-            cat "$bottle_block"
-            echo ""
-            echo "$tail_part"
-          } > "$formula_file"
-          rm "$bottle_block"
+          ruby ./bottle-block.rb Formula/angie.rb "$version" "$root_url" "${bottles[@]}"
 
       - name: Commit and push bottle update
         run: |

@@ -14,72 +14,56 @@ class Angie < Formula
   bottle do
     root_url "https://github.com/stychos/homebrew-angie/releases/download/bottle-6e20fd9"
     sha256 cellar: :any, arm64_sequoia: "c9f15950d81f8fb8dd5c413278a399f63911649abafc35c6f3f24ff999965563"
-    sha256 cellar: :any, arm64_sonoma:  "a102e2a2d3b28e269c4f17b0d2146a523aacc897ef73ce1e7b7eb8fa999ebc9c"
     sha256 cellar: :any, arm64_tahoe:   "e5c82a9e8d9322601723e9b162520b5b1ada6f28757ff30e20b6d2d27fe9d41a"
-    sha256 cellar: :any, sequoia:       "cede26e8ae54815cf8d7b826dfafe084f92b2b9a48fd57fb47500e616de026d3"
     sha256 cellar: :any, x86_64_linux:  "d8fe6189f1de372f8cd74517b47041727f8bff27c9bc6922b53ee6acab8e7ab1"
   end
 
   bottle do
     root_url "https://github.com/stychos/homebrew-angie/releases/download/1.11.3"
     sha256 cellar: :any, arm64_sequoia: "0f7a3e67ababd88259b88bc2cfbe5165398e36c7cb4863ee8636e5c157a43390"
-    sha256 cellar: :any, arm64_sonoma:  "30076d2aaf68bf8b5d3d56abd7f36c1d046ceaaea8ba42716717eb6ed09f391a"
     sha256 cellar: :any, arm64_tahoe:   "51a858fcf993cfee61ba843029939b1370dae21d42c5c3cb595b201531295619"
-    sha256 cellar: :any, sequoia:       "e00e890574d5e6121644de0583d4867ed3ee450fbba31dfb2b186d293d3675c0"
     sha256 cellar: :any, x86_64_linux:  "f501a9493d8836aa40b08b08ed22d1eccc77197ae493779879ecf37fbd391464"
   end
 
   bottle do
     root_url "https://github.com/stychos/homebrew-angie/releases/download/1.11.4"
     sha256 cellar: :any, arm64_sequoia: "088054d056c27b021b96563ccc70710096e752a58a0a990e30efa3678c5fb0a6"
-    sha256 cellar: :any, arm64_sonoma:  "94c9970b6b6efd62b0c5b4b359dcb1f54da185df26bc33f3183e439a8952be43"
     sha256 cellar: :any, arm64_tahoe:   "2410c6a3544c2d46eb833791f32391633f9e0191cf1fc26667052b4b57680433"
-    sha256 cellar: :any, sequoia:       "749a6f63e21a6cc9fd4e21cfd1708b56cc5d8cc1d80b0105233fd64d7670abf7"
     sha256 cellar: :any, x86_64_linux:  "6ad02b5986379670e72c3e99e9767774ab90e21975615f847ccee50fb036b637"
   end
 
   bottle do
     root_url "https://github.com/stychos/homebrew-angie/releases/download/1.11.5"
     sha256 cellar: :any, arm64_sequoia: "a2de0e8a6d5fc0316d7ec9cc862c9a65c7304cd24b25336854dcf59067b04465"
-    sha256 cellar: :any, arm64_sonoma:  "d1c6c6d2ddc3169117d8d2b2a33b6357d559c88f6007fc871026d770241125b1"
     sha256 cellar: :any, arm64_tahoe:   "0dea10bf5a7a4418dd061c9a15c616bbb34ee3b41597eb83f84c2ac6fa83ff17"
-    sha256 cellar: :any, sequoia:       "b9a6acaa5f860c8cf37b7fead2bfbb31f7c6ab4ec746559a670cfe5423da4b84"
     sha256 cellar: :any, x86_64_linux:  "93b791967b1fd8834fbfa84ae0e750a0f062be77c59e4e37efb7db2c399e8388"
   end
 
   bottle do
     root_url "https://github.com/stychos/homebrew-angie/releases/download/1.11.6"
     sha256 cellar: :any, arm64_sequoia: "aff1439354d6679468c791b3672853dc75dc6da9086da4a0c4920ef423acf549"
-    sha256 cellar: :any, arm64_sonoma:  "0bbba2218a35228c511da95e6af652a5690b4ff79af42aa8c4917f90b9ac1748"
     sha256 cellar: :any, arm64_tahoe:   "4f08732d216a1d87e632872b439bcd54b98ef12270e6cf6c806a948001201580"
-    sha256 cellar: :any, sequoia:       "572a13c7d137c6fc30139938849377f5758d085caf452e3d8420f3b8126228b6"
     sha256 cellar: :any, x86_64_linux:  "d84a7d5d8654f7bbc0fc176a0b8a0c46a4ef89f5a83bb03ba8561a2c55a82dbd"
   end
 
   bottle do
     root_url "https://github.com/stychos/homebrew-angie/releases/download/1.11.8"
     sha256 cellar: :any, arm64_sequoia: "3a76029c6b105267e7af7365e8f5b0a8031f10d27e3cc86e73b6702b2c918fa7"
-    sha256 cellar: :any, arm64_sonoma:  "7ce05b4e5dad13146d070253fa2f4dde9c186db8f0f546ac8155f5db12ef9fa4"
     sha256 cellar: :any, arm64_tahoe:   "32df8ae18c09e9eb54aebabd928c8a2ebffea075d5d7621ae8aaa3a24bb945a1"
-    sha256 cellar: :any, sequoia:       "d90f755679eabd2c91947d60b5464be0393fa962ee2c3a38135103628abfc50b"
     sha256 cellar: :any, x86_64_linux:  "126b2dffb09318eb5e53186b2a848b96060a740f2608b5a99e2a67f3d6ad7dc7"
   end
 
   bottle do
     root_url "https://github.com/stychos/homebrew-angie/releases/download/1.12.0"
     sha256 cellar: :any, arm64_sequoia: "2cd66b223abd78f084ccafab834e1260ed4eaed2dfc6d3a10e4a1a03c67317db"
-    sha256 cellar: :any, arm64_sonoma:  "a603a2f8bf51e654fc83fa3e7706f6428b0b5de7d1a4026bc92c9572b21b5059"
     sha256 cellar: :any, arm64_tahoe:   "f41b9673daa773e1e9342213a53652da14ddfaa445cdd4ad5f21eaec214407d5"
-    sha256 cellar: :any, sequoia:       "5003a717d393b244501927ddbd20c615389ed6af233afe587738f5bd14563986"
     sha256 cellar: :any, x86_64_linux:  "d34286c8a712a74c21571aea3c487ec80d751a62bbc4ebe1cdc1da52b72df7e2"
   end
 
   bottle do
     root_url "https://github.com/stychos/homebrew-angie/releases/download/1.12.1"
     sha256 cellar: :any, arm64_sequoia: "38b91bf8336fa398ef271895661473e34500012937900a2ac9c4b31ea06a23d9"
-    sha256 cellar: :any, arm64_sonoma:  "4a60962356cf58db22198770ee4da51b37e13faf9a87183a34ed5f6b0f338388"
     sha256 cellar: :any, arm64_tahoe:   "121663f39579030600c97288c576e987256d2cd766de548c67e209bee7d3f2e3"
-    sha256 cellar: :any, sequoia:       "5ca656226fc85c7ffc75d3d2eb0e70357f26894ed5ffca333c88489fcbf7ee60"
     sha256 cellar: :any, x86_64_linux:  "6c2775c49fad62c12efe3c945fcc9b2b4dc1aebb400d1a99ebebc83e61068140"
   end
 
@@ -99,9 +83,10 @@ class Angie < Formula
 
   bottle do
     root_url "https://github.com/stychos/homebrew-angie/releases/download/1.12.4"
-    sha256 cellar: :any, arm64_sequoia: "086d56baa9fa9f10a64326e55ac3cf2172f8d4de1c3432dd304d60cb18894484"
-    sha256 cellar: :any, arm64_tahoe:   "69a00096afd9a8fe5320c2cb0cf2e42bbc8ddd01977fc67a7313f4a90abb4f0b"
-    sha256 cellar: :any, x86_64_linux:  "65349cff4cfbbbc61a03175ca3eeea2cdbff57de9d88b05d0095d8fd7b84294e"
+    sha256 cellar: :any, arm64_golden_gate: "06bb71d6f55726f7458a337722884d5e9c312088ea8ac58ab6884a57d1e6036f"
+    sha256 cellar: :any, arm64_sequoia:     "086d56baa9fa9f10a64326e55ac3cf2172f8d4de1c3432dd304d60cb18894484"
+    sha256 cellar: :any, arm64_tahoe:       "69a00096afd9a8fe5320c2cb0cf2e42bbc8ddd01977fc67a7313f4a90abb4f0b"
+    sha256 cellar: :any, x86_64_linux:      "65349cff4cfbbbc61a03175ca3eeea2cdbff57de9d88b05d0095d8fd7b84294e"
   end
 
   depends_on "gd"
