@@ -1,16 +1,16 @@
 class LuaAngieModule < Formula
   desc "Lua scripting (LuaJIT) module with lua-resty-core for angie-full"
   homepage "https://github.com/openresty/lua-nginx-module"
-  url "https://github.com/openresty/lua-nginx-module/archive/refs/tags/v0.10.29R2.tar.gz"
-  sha256 "2435bb65900d556a9175c77548ff0ef4cb507b786f57f7d1c4a7904a7f5063fd"
+  url "https://github.com/openresty/lua-nginx-module/archive/refs/tags/v0.10.31.tar.gz"
+  sha256 "123d8203e74bf66f71437c7b3fa070bf8d24e6d332981bc18dc2db43303cc741"
   license "BSD-2-Clause"
 
   depends_on "luajit-openresty"
   depends_on "ndk-angie-module"
 
   resource "lua-resty-core" do
-    url "https://github.com/openresty/lua-resty-core/archive/refs/tags/v0.1.32R1.tar.gz"
-    sha256 "7d36188261f44d489acc1671ced73207e2f7adba70663d3f32804509873f3370"
+    url "https://github.com/openresty/lua-resty-core/archive/refs/tags/v0.1.34rc3.tar.gz"
+    sha256 "28848c6c9f8878b8cbfc398b3774fdd0cb172401ca1798441bfb1689ac0210fb"
   end
 
   resource "lua-resty-lrucache" do

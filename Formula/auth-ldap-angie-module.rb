@@ -6,6 +6,10 @@ class AuthLdapAngieModule < Formula
   sha256 "d1b36b0973bc4089d3e1035679486ac286a0118df39dad0da399a6016e0ccc5b"
   license "BSD-2-Clause"
 
+  livecheck do
+    skip "Upstream's tags predate the pinned commit"
+  end
+
   depends_on "openldap"
 
   def install

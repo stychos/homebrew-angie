@@ -5,6 +5,11 @@ class PostgresAngieModule < Formula
   sha256 "c942e674a7273ab87caab4dcad626ab54852be192c29b1add50d2cb535e3cbb9"
   license "BSD-2-Clause"
 
+  livecheck do
+    url :stable
+    regex(/^v?(\d+(?:\.\d+)+(?:rc\d+)?)$/i)
+  end
+
   depends_on "libpq"
 
   def install

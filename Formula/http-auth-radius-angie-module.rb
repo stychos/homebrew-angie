@@ -5,6 +5,10 @@ class HttpAuthRadiusAngieModule < Formula
   version "2024.06.14"
   sha256 "49195d489989472e2127d82c6efa404f0efe88c8d816fb904e2573485767a452"
 
+  livecheck do
+    skip "Upstream has no tagged releases; pinned to a commit"
+  end
+
   def install
     pkgshare.install Dir["*"]
   end

@@ -8,8 +8,8 @@ class Angie < Formula
   head "https://github.com/webserver-llc/angie.git", branch: "master"
 
   livecheck do
-    url "https://en.angie.software/angie/docs/installation/sourcebuild/"
-    regex(%r{https://download.angie.software/files/angie-([\d.]+)\.t}i)
+    url "https://download.angie.software/files/"
+    regex(/href=["']?angie-v?(\d+(?:\.\d+)+)\.t/i)
   end
 
   bottle do

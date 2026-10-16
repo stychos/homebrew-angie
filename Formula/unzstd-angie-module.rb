@@ -6,6 +6,10 @@ class UnzstdAngieModule < Formula
   sha256 "72f9690e1ae11e49aeeb446a4e4a25e155a0781793a4b7cc15a85d0941a2a419"
   license "BSD-2-Clause"
 
+  livecheck do
+    skip "Upstream has no tagged releases; pinned to a commit"
+  end
+
   depends_on "zstd"
 
   def install

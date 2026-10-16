@@ -5,6 +5,10 @@ class TestcookieAngieModule < Formula
   version "2026.05.18"
   sha256 "679dc915b464c791fe7ae27a610ca38f3a0b40a68c4b24fbcbb835d232224fc0"
 
+  livecheck do
+    skip "Upstream has no tagged releases; pinned to a commit"
+  end
+
   def install
     pkgshare.install Dir["*"]
   end

@@ -5,6 +5,10 @@ class UnbrotliAngieModule < Formula
   version "2023.06.01"
   sha256 "5ff66c1ab88824b81b65e8ef876a68bfbee79d4a1b1c91eae628db24252e796d"
 
+  livecheck do
+    skip "Upstream has no tagged releases; pinned to a commit"
+  end
+
   depends_on "brotli"
 
   def install

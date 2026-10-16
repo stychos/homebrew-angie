@@ -6,6 +6,10 @@ class SubsAngieModule < Formula
   version "2022.01.24"
   sha256 "da2a26aa75884e1216941c7291b6e8b7fc4dd7163700a04191b92060b61fabb3"
 
+  livecheck do
+    skip "Upstream's tags predate the pinned commit"
+  end
+
   def install
     pkgshare.install Dir["*"]
   end
