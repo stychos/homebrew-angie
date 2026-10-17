@@ -347,6 +347,8 @@ class AngieFull < Formula
   end
 
   service do
+    # Same service identity as the conflicting angie formula: `brew services restart` works after switching
+    name macos: "sh.brew.angie", linux: "sh.brew.angie"
     run [opt_bin/"angie", "-g", "daemon off;"]
     keep_alive false
     working_dir HOMEBREW_PREFIX

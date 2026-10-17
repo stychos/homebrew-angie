@@ -23,7 +23,7 @@ brew options stychos/angie/angie-full                 # every --with-... option
 brew services start stychos/angie/angie-full          # run it (port 8080)
 ```
 
-The two formulae conflict with each other (same `angie` binary and `/opt/homebrew/etc/angie`); switch with `brew uninstall angie && brew install stychos/angie/angie-full`. Any `--with-...` option means a build from source, as everywhere in Homebrew. `--with-perl` and `--with-gperftools` add the built-in Perl and Google perftools modules.
+The two formulae conflict with each other (same `angie` binary and `/opt/homebrew/etc/angie`); switch with `brew uninstall angie && brew install stychos/angie/angie-full`. Both register the same service (`sh.brew.angie`), so a running one is picked up again with `brew services restart stychos/angie/angie-full` (with `sudo` if it was started with `sudo`). Any `--with-...` option means a build from source, as everywhere in Homebrew. `--with-perl` and `--with-gperftools` add the built-in Perl and Google perftools modules.
 
 The default port is 8080 so Angie runs without sudo. Configuration lives in `/opt/homebrew/etc/angie/` (`servers/*` is included), the docroot is `/opt/homebrew/var/www` and ACME certificates go to `/opt/homebrew/var/acme`. Start it with `brew services start stychos/angie/angie` (`sudo brew services start ...` for port 80).
 
