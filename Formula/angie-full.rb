@@ -74,9 +74,10 @@ class AngieFull < Formula
 
   bottle do
     root_url "https://github.com/stychos/homebrew-angie/releases/download/1.12.5"
-    sha256 cellar: :any, arm64_sequoia: "0bcd91dda29a7cb77d02e748dcc128fe93c2f37ae44d00ef205a7f1071b48ba3"
-    sha256 cellar: :any, arm64_tahoe:   "6c3e7d75d2710803b9ab6dcec8bcf1bac38315479e0fdf9e9c563b4b052bb536"
-    sha256 cellar: :any, x86_64_linux:  "f6fa62b2824eddae4ee72aba2fb6fb9a43b103c2a7a4e89d8bdcff04714d793f"
+    sha256 cellar: :any, arm64_golden_gate: "e1c1d7804e811a08f0fcff1a7c342061ac07d4645cb5b22ae3359948bbb24555"
+    sha256 cellar: :any, arm64_sequoia:     "cdc3f0f8373599883ff8a8489303416c61408cf304757330ce40acd5f00de8ae"
+    sha256 cellar: :any, arm64_tahoe:       "d3b863ade62c124b254968fe82c538204566876d03138e9e15da56a202a996dd"
+    sha256 cellar: :any, x86_64_linux:      "8c7f8f09cd596f11ffaeaa9f3caeda2e73e184a742a4ef5d30188a8c75310a70"
   end
 
   depends_on "ndk-angie-module" => :build if build.with?("lua-module") || build.with?("set-misc-module")
