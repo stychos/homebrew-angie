@@ -1,8 +1,8 @@
 class AngieFull < Formula
   desc "HTTP(S) server and reverse proxy with all built-in and third-party modules"
   homepage "https://en.angie.software/"
-  url "https://download.en.angie.software/files/angie-1.12.4.tar.gz"
-  sha256 "b236f152adb543fb6e4a94f271b873cdc0d48d570f86b1bd04435f85843f4527"
+  url "https://download.en.angie.software/files/angie-1.12.5.tar.gz"
+  sha256 "0930e568719846ec9e63b0de0673bb902e66fb7679e4ac6de495c27f5e7c9f99"
   license "BSD-2-Clause"
   head "https://github.com/webserver-llc/angie.git", branch: "master"
 
