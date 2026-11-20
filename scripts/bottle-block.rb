@@ -4,10 +4,10 @@
 #
 #   ruby scripts/bottle-block.rb Formula/angie.rb <version> <root_url> <tag>=<sha256>...
 #
-# Lines for tags that are not passed are kept, so bottles added from elsewhere
-# (e.g. by scripts/bottle-local.sh) survive a CI run for the same version.
+# Lines for tags that are not passed are kept, so a run that builds fewer
+# platforms does not drop bottles already published for that version.
 # Lives in scripts/ because `brew doctor` rejects Ruby files in the tap root.
-# Used by .github/workflows/publish.yml and scripts/bottle-local.sh.
+# Used by .github/workflows/publish.yml.
 
 formula_file, version, root_url, *bottles = ARGV
 abort "usage: #{$PROGRAM_NAME} <formula> <version> <root_url> <tag>=<sha256>..." if bottles.empty?
