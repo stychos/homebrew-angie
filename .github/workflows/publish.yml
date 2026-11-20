@@ -92,7 +92,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-22.04, macos-15, macos-26]
+        # xcode-27 is the hosted macOS 27 arm64 image (preview); there is no macos-27 label
+        os: [ubuntu-22.04, macos-15, macos-26, xcode-27]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Set up Homebrew
