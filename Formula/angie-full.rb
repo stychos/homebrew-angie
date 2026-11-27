@@ -80,6 +80,14 @@ class AngieFull < Formula
     sha256 cellar: :any, x86_64_linux:      "8c7f8f09cd596f11ffaeaa9f3caeda2e73e184a742a4ef5d30188a8c75310a70"
   end
 
+  bottle do
+    root_url "https://github.com/stychos/homebrew-angie/releases/download/1.12.6"
+    sha256 cellar: :any, arm64_golden_gate: "15b05e6655cb46930e5db96fa3a8eb153f082c87fb626614b5942fc99b2cc4ab"
+    sha256 cellar: :any, arm64_sequoia:     "81075fd6957a0dcc73c4237df0a636ff8330c6d122bbdafb2c84cb0af67f3f7b"
+    sha256 cellar: :any, arm64_tahoe:       "d30d9ada70c19c509093a62540b5c9241a5f523e5dec3aa613250606a4ecb7c4"
+    sha256 cellar: :any, x86_64_linux:      "4ae0d6f1824d16f5daac16088db9ff824e070bf01abe8a72cca1518cdd910963"
+  end
+
   depends_on "ndk-angie-module" => :build if build.with?("lua-module") || build.with?("set-misc-module")
   # Libraries linked into angie when the matching third-party module is enabled.
   # Kept as data because the option names differ from the formula names.
