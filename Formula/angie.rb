@@ -4,7 +4,6 @@ class Angie < Formula
   url "https://download.en.angie.software/files/angie-1.12.6.tar.gz"
   sha256 "6e5875a9e425119f26499876ec10115fd84d2e632f421e299db0142c31d6b15e"
   license "BSD-2-Clause"
-  revision 1
   head "https://github.com/webserver-llc/angie.git", branch: "master"
 
   livecheck do

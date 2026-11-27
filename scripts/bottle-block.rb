@@ -43,4 +43,5 @@ else
   source.sub(/^  depends_on/) { "#{new_block}\n  depends_on" }
 end
 File.write(formula_file, updated)
-puts "#{block ? "Updated" : "Added"} bottle block #{version}: #{entries.keys.join(", ")}"
+action = block ? "Updated" : "Added"
+puts "#{action} bottle block #{version}: #{entries.keys.join(", ")}"
